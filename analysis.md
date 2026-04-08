@@ -71,7 +71,7 @@
 
 ---
 
-### Path 3: Khi AI sai ⚠️
+### Path 3: Khi AI sai
 
 **Câu hỏi gửi Moni:** `"Phân loại giao dịch gần nhất của tôi"`
 
@@ -81,11 +81,11 @@
 
 | Giao dịch | Danh mục Moni gán | Đúng/Sai? |
 |-----------|-------------------|-----------|
-| điện quang — 200.000đ | Hóa đơn | ✅ Đúng |
-| Circle K — 50.000đ | **Mua sắm** | ❌ **Sai** — Circle K là cửa hàng tiện lợi, mua đồ ăn/uống → nên là "Ăn uống" |
-| ăn bún — 20.000đ | Ăn uống | ✅ Đúng |
-| Ăn sáng — 20.000đ | Ăn uống | ✅ Đúng |
-| -500k — 500.000đ | Di chuyển | ⚠️ Không rõ — tên giao dịch chỉ là "-500k", không có context để verify |
+| điện quang — 200.000đ | Hóa đơn | Đúng |
+| Circle K — 50.000đ | **Mua sắm** | **Sai** — Circle K là cửa hàng tiện lợi, mua đồ ăn/uống → nên là "Ăn uống" |
+| ăn bún — 20.000đ | Ăn uống | Đúng |
+| Ăn sáng — 20.000đ | Ăn uống | Đúng |
+| -500k — 500.000đ | Di chuyển | Không rõ — tên giao dịch chỉ là "-500k", không có context để verify |
 
 **Phân tích:**
 
@@ -125,10 +125,10 @@
 
 | Path | Đánh giá | Bằng chứng từ test thực tế |
 |------|----------|---------------------------|
-| 1. AI đúng | ✅ Tốt | Trả lời nhanh, đúng, có 3 chỉ số + nút feedback + gợi ý follow-up |
-| 2. AI không chắc | ✅ **Tốt nhất** | Hỏi lại với 3 ví dụ cụ thể, không đoán bừa, giọng thân thiện |
-| 3. AI sai | ❌ **Yếu nhất** | Circle K bị tag "Mua sắm" thay vì "Ăn uống". Không sửa được trong chat, 4-5 bước recovery |
-| 4. User mất tin | ❌ Yếu | Moni từ chối chuyển CSKH, không exit/fallback, user bị "nhốt" trong loop AI |
+| 1. AI đúng | Tốt | Trả lời nhanh, đúng, có 3 chỉ số + nút feedback + gợi ý follow-up |
+| 2. AI không chắc | **Tốt nhất** | Hỏi lại với 3 ví dụ cụ thể, không đoán bừa, giọng thân thiện |
+| 3. AI sai | **Yếu nhất** | Circle K bị tag "Mua sắm" thay vì "Ăn uống". Không sửa được trong chat, 4-5 bước recovery |
+| 4. User mất tin | Yếu | Moni từ chối chuyển CSKH, không exit/fallback, user bị "nhốt" trong loop AI |
 
 **Path yếu nhất: Path 3 + Path 4** — Khi AI sai, không có cách sửa nhanh. Khi user muốn thoát, không có đường ra. Hai path này kết hợp tạo vòng xoáy mất niềm tin: sai → muốn escalate → bị chặn → càng mất tin.
 
@@ -161,16 +161,16 @@ Cụ thể 2 gap nghiêm trọng:
 
 ```
 User mở Moni chat
-    → Hỏi "Phân loại giao dịch gần nhất"
-    → Moni hiện bảng 5 giao dịch (read-only)
-    → User thấy Circle K 50.000đ bị tag "Mua sắm" (sai — đây là ăn uống)
-    → ❌ BREAKING POINT: Bảng chỉ đọc, không bấm sửa được
-    → User phải thoát chat Moni (nút ←)
-    → Tự tìm "Sổ giao dịch" trong app
-    → Tìm giao dịch Circle K trong danh sách
-    → Bấm vào → Sửa danh mục → Chọn "Ăn uống" → Lưu
-    → Quay lại Moni → Hỏi lại để verify
-    → (Không biết AI có học từ correction không)
+ → Hỏi "Phân loại giao dịch gần nhất"
+ → Moni hiện bảng 5 giao dịch (read-only)
+ → User thấy Circle K 50.000đ bị tag "Mua sắm" (sai — đây là ăn uống)
+ → BREAKING POINT: Bảng chỉ đọc, không bấm sửa được
+ → User phải thoát chat Moni (nút ←)
+ → Tự tìm "Sổ giao dịch" trong app
+ → Tìm giao dịch Circle K trong danh sách
+ → Bấm vào → Sửa danh mục → Chọn "Ăn uống" → Lưu
+ → Quay lại Moni → Hỏi lại để verify
+ → (Không biết AI có học từ correction không)
 ```
 
 **Vấn đề chính:**
@@ -184,15 +184,15 @@ User mở Moni chat
 
 ```
 User mở Moni chat
-    → Hỏi "Phân loại giao dịch gần nhất"
-    → Moni hiện bảng 5 giao dịch — NHƯNG bấm được
-    → Circle K hiện tag nhạt "Mua sắm?" + icon ⚠️ (AI không chắc)
-    → User bấm vào tag "Mua sắm?" trực tiếp trong bảng
-    → ✅ Pop-up nhỏ: "Ăn uống" · "Mua sắm" · "Khác..."
-    → User chọn "Ăn uống" (1 chạm)
-    → ✅ Bảng cập nhật tức thì + Moni nói: "Đã ghi nhận! Lần sau sẽ chính xác hơn"
-    → Nếu user vẫn không tin → nút "Nói chuyện với nhân viên MoMo" ngay trong chat
-    → (AI ghi nhận correction → cải thiện model cho user này)
+ → Hỏi "Phân loại giao dịch gần nhất"
+ → Moni hiện bảng 5 giao dịch — NHƯNG bấm được
+ → Circle K hiện tag nhạt "Mua sắm?" + icon (AI không chắc)
+ → User bấm vào tag "Mua sắm?" trực tiếp trong bảng
+ → Pop-up nhỏ: "Ăn uống" · "Mua sắm" · "Khác..."
+ → User chọn "Ăn uống" (1 chạm)
+ → Bảng cập nhật tức thì + Moni nói: "Đã ghi nhận! Lần sau sẽ chính xác hơn"
+ → Nếu user vẫn không tin → nút "Nói chuyện với nhân viên MoMo" ngay trong chat
+ → (AI ghi nhận correction → cải thiện model cho user này)
 ```
 
 **Thay đổi chính:**
@@ -210,7 +210,7 @@ User mở Moni chat
 ### Lợi ích
 
 - **Giảm friction:** 4-5 bước → 2 bước chạm (VD: sửa Circle K từ "Mua sắm" → "Ăn uống" ngay trong chat)
-- **Tăng trust:** User thấy AI thừa nhận không chắc (icon ⚠️) + học từ correction
+- **Tăng trust:** User thấy AI thừa nhận không chắc + học từ correction
 - **Tạo feedback loop:** Mỗi correction = training signal → AI ngày càng chính xác cho user đó
 - **Có lối thoát:** Khi user mất niềm tin → có nút escalate sang người thật, không bị "nhốt" trong loop AI
 
